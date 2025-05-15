@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="lv">
   <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Moodify — Mūzika pēc noskaņas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- Bootstrap CSS (ātrs dizains) / Быстрый дизайн через Bootstrap -->
     <link
@@ -10,32 +11,30 @@
       rel="stylesheet"
       integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT"
       crossorigin="anonymous"
-    >
+    />
 
     <!-- FontAwesome ikonas / Иконки FontAwesome -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    >
+    />
 
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
     <div class="d-flex flex-column vh-100">
       <header class="flex-shrink-0">
         <div class="container">
           <!-- Tēmas un režīma pārslēgšana / Переключение темы и режима -->
-          <div class="container d-flex justify-content-end gap-2">
-            <button id="theme-toggle" class="btn btn-outline-secondary btn-sm">
-              🌙 Tēma
-            </button>
-            <button id="peep-toggle" class="btn btn-outline-secondary btn-sm">
-              Peep Mode
-            </button>
+          <div
+            class="container d-flex flex-wrap justify-content-end gap-2 mt-2"
+          >
+            <button id="theme-toggle" class="btn btn-outline-secondary btn-sm">🌙 Tēma</button>
+            <button id="peep-toggle" class="btn btn-outline-secondary btn-sm">Peep Mode</button>
           </div>
         </div>
 
-        <div class="container text-center py-3">
+        <div class="container text-center py-2">
           <h1 class="mt-3 mb-0">🎧 Moodify</h1>
         </div>
       </header>
@@ -43,15 +42,15 @@
       <main class="flex-grow-1 d-flex flex-column overflow-hidden">
         <!-- Vadības bloks (paliek augšā) / Блок управления (прикреплён сверху) -->
         <div id="controls-container">
-          <div id="controls">
-            <p>Izvēlies noskaņojumu:</p>
-            <select id="mood-select">
+          <p>Izvēlies noskaņojumu:</p>
+          <div id="controls" class="container flex-md-row align-items-center justify-content-center gap-3">
+            <select id="mood-select" class="form-select w-auto">
               <option value="happy">Jautrs</option>
               <option value="sad">Skumjš</option>
               <option value="chill">Mierīgs</option>
               <option value="energetic">Enerģisks</option>
             </select>
-            <button id="find-button">Atrast mūziku</button>
+            <button id="find-button" class="btn btn-primary">Atrast mūziku</button>
           </div>
         </div>
 
@@ -60,10 +59,35 @@
           <div id="loading"></div>
           <div id="tracks"></div>
         </div>
+
+        <div
+          id="global-player"
+          class="custom-player justify-content-center mx-auto"
+        >
+          <div class="now-playing mt-3 fw-bold"></div>
+          <div class="player-controls mb-2">
+            <button class="prev">⏮️</button>
+            <button class="play">▶️</button>
+            <button class="next">⏭️</button>
+            <input
+              class="volume"
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              value="1"
+            />
+            <div class="play-time">
+              <div class="progress"><div class="bar"></div></div>
+              <span class="time">0:00</span>
+            </div>
+            <audio></audio>
+          </div>
+        </div>
       </main>
 
       <footer class="flex-shrink-0 text-center text-lg-start">
-        <div class="container pt-1">
+        <div class="container">
           <!-- Ikonas uz mājaslapām / Иконки на сайты -->
           <div class="text-center icon-links">
             <a

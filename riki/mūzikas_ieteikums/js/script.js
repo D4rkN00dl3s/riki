@@ -134,17 +134,17 @@ $(function () {
 
 	// --- Stila pārslēgšana / Переключение стиля ---
 	function applyPeepStyle() {
-		$('#controls').hide();
+		$('#controls-container').hide();
 		$('h1').text('🎵 Peep Mode');
 		$('#peep-toggle').text('Exit Peep');
-		$('body').addClass('dark peep-mode');
+		$('body').addClass('peep-mode');
 	}
 
 	function removePeepStyle() {
-		$('#controls').show();
+		$('#controls-container').show();
 		$('h1').text('🎧 Moodify');
 		$('#peep-toggle').text('Peep Mode');
-		$('body').removeClass('dark peep-mode');
+		$('body').removeClass('peep-mode');
 	}
 
 	// --- Deezer JSONP pieprasījumi / Deezer JSONP запросы ---
@@ -178,52 +178,120 @@ $(function () {
 
 	// --- Palīgfunkcijas un atskaņotājs / Утилиты и плеер ---
 	function pickRandom(a) { return a[Math.floor(Math.random() * a.length)]; }
+
+	let currentTrackDiv = null;
+	const player = $('#global-player');
+	const audio = player.find('audio')[0];
+	const btnPlay = player.find('.play');
+	const btnPrev = player.find('.prev');
+	const btnNext = player.find('.next');
+	const bar = player.find('.bar');
+	const time = player.find('.time');
+	const vol = player.find('.volume')[0];
+
 	function createTrackDiv(tr) {
-		const div = $('<div>').addClass('track');
+		const div = $('<div>').addClass('track').data('track', tr);
 		$('<img>').attr('src', tr.album.cover_medium).attr('loading', 'lazy').appendTo(div);
+
 		const info = $('<div>').addClass('track-info').appendTo(div);
 		const yt = encodeURIComponent(`${tr.title} ${tr.artist.name}`);
 		$('<p>').html(`<strong><a href="https://www.youtube.com/results?search_query=${yt}" target="_blank">${tr.title}</a></strong>`).appendTo(info);
+
 		const sp = encodeURIComponent(tr.artist.name);
 		$('<p>').html(`<a href="https://open.spotify.com/search/${sp}" target="_blank">${tr.artist.name}</a>`).appendTo(info);
-		const ph = `<div class="custom-player">
-      <button class="prev">⏮️</button>
-      <button class="play">▶️</button>
-      <button class="next">⏭️</button>
-      <input class="volume" type="range" min="0" max="1" step="0.01" value="1">
-      <div class="progress"><div class="bar"></div></div>
-      <span class="time">0:00</span>
-      <audio src="${tr.preview}"></audio>
-    </div>`;
-		const player = $(ph).appendTo(info);
-		initPlayer(player);
+
+		div.on('click', (e) => {
+			if ($(e.target).is('a')) return;
+			playTrack(tr, div);
+		});
+
 		return div;
 	}
-	function initPlayer(c) {
-		const audio = c.find('audio')[0];
-		const btn = c.find('button.play'); const prev = c.find('button.prev'); const next = c.find('button.next');
-		const bar = c.find('.bar'); const time = c.find('.time'); const vol = c.find('.volume')[0];
-		prev.hide(); next.hide();
-		btn.on('click', e => { e.stopPropagation(); audio.paused ? audio.play() : audio.pause(); });
-		prev.on('click', e => { e.stopPropagation(); audio.pause(); const p = c.closest('.track').prev().find('audio')[0]; if (p) p.play(); });
-		next.on('click', e => { e.stopPropagation(); audio.pause(); const n = c.closest('.track').next().find('audio')[0]; if (n) n.play(); });
-		vol.oninput = () => audio.volume = vol.value;
-		audio.onplay = () => { $('audio').not(audio).each((i, a) => a.pause()); btn.text('⏸️'); prev.show(); next.show(); };
-		audio.onpause = () => { btn.text('▶️'); prev.hide(); next.hide(); };
-		audio.ontimeupdate = () => {
-			if (!audio.duration) return;
-			const pct = (audio.currentTime / audio.duration) * 100;
-			bar.css('width', pct + '%');
-			const m = Math.floor(audio.currentTime / 60), s = String(Math.floor(audio.currentTime % 60)).padStart(2, '0');
-			time.text(`${m}:${s}`);
-		};
-		c.find('.progress').on('click', e => { e.stopPropagation(); const r = c.find('.progress')[0].getBoundingClientRect(); audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration; });
-		audio.onended = () => { prev.hide(); next.hide(); const nx = c.closest('.track').next().find('audio')[0]; if (nx) nx.play(); };
+
+	function playTrack(track, trackDiv) {
+		if (audio.src !== track.preview) {
+			audio.src = track.preview;
+		}
+
+		currentTrackDiv?.removeClass('playing');
+		currentTrackDiv = trackDiv;
+		currentTrackDiv.addClass('playing');
+
+		audio.play();
+
+		$('.now-playing').text(`${track.title} — ${track.artist.name}`);
 	}
 
+	btnPlay.on('click', () => {
+		audio.paused ? audio.play() : audio.pause();
+	});
+
+	btnPrev.on('click', () => {
+		if (!currentTrackDiv) return;
+		const prev = currentTrackDiv.prev('.track');
+		if (prev.length) playTrack(prev.data('track'), prev);
+	});
+
+	btnNext.on('click', () => {
+		if (!currentTrackDiv) return;
+		const next = currentTrackDiv.next('.track');
+		if (next.length) playTrack(next.data('track'), next);
+	});
+
+	// Volume
+	vol.oninput = () => {
+		audio.volume = vol.value;
+		localStorage.setItem('volume', vol.value);
+	};
+
+	const savedVolume = localStorage.getItem('volume');
+	if (savedVolume !== null) {
+		vol.value = savedVolume;
+		audio.volume = savedVolume;
+	}
+
+	// Progress click
+	player.find('.progress').on('click', e => {
+		const r = player.find('.progress')[0].getBoundingClientRect();
+		audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration;
+	});
+
+	// Time and UI update
+	audio.ontimeupdate = () => {
+		if (!audio.duration) return;
+		const pct = (audio.currentTime / audio.duration) * 100;
+		bar.css('width', pct + '%');
+		const m = Math.floor(audio.currentTime / 60), s = String(Math.floor(audio.currentTime % 60)).padStart(2, '0');
+		time.text(`${m}:${s}`);
+	};
+
+	audio.onplay = () => {
+		$('audio').not(audio).each((i, a) => a.pause()); // just in case
+		btnPlay.text('⏸️');
+	};
+
+	audio.onpause = () => {
+		btnPlay.text('▶️');
+	};
+
+	audio.onended = () => {
+		const next = currentTrackDiv?.next('.track');
+		if (next.length) {
+			playTrack(next.data('track'), next);
+		}
+	};
+
 	// --- Notikumu saistīšana / Привязка событий ---
-	$('#theme-toggle').on('click', () => $('body').toggleClass('dark'));
+	if (localStorage.getItem('theme') === 'dark') {
+		$('body').addClass('dark');
+	}
+	$('#theme-toggle').on('click', () => {
+		$('body').toggleClass('dark');
+		localStorage.setItem('theme', $('body').hasClass('dark') ? 'dark' : 'light');
+	});
+
 	$('#peep-toggle').on('click', () => state.mode === 'peep' ? loadNormalTracks() : loadPeepTracks());
+
 	$('#find-button').on('click', () => {
 		// Normālajā režīmā izlemt, vai ielādēt jaunus dziesmas vai parādīt nākamo daļu / В нормальном режиме решить, загружать ли новые треки или показывать следующий блок
 		if (state.mode === 'normal') {
