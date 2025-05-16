@@ -119,7 +119,7 @@ button:hover, select:hover {
 
 #controls {
   display: flex;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 #loading {

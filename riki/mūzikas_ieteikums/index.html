@@ -23,7 +23,7 @@
   </head>
   <body>
     <div class="d-flex flex-column vh-100">
-      <header class="flex-shrink-0">
+      <header class="d-flex flex-column flex-shrink-0 gap-0">
         <div class="container">
           <!-- Tēmas un režīma pārslēgšana / Переключение темы и режима -->
           <div
@@ -35,14 +35,14 @@
         </div>
 
         <div class="container text-center py-2 pt-0">
-          <h1 class="mt-3 mb-0">🎧 Moodify</h1>
+          <h1 class="mt-2 mb-0">🎧 Moodify</h1>
         </div>
       </header>
 
       <main class="flex-grow-1 d-flex flex-column overflow-hidden">
         <!-- Vadības bloks (paliek augšā) / Блок управления (прикреплён сверху) -->
         <div id="controls-container">
-          <p>Izvēlies noskaņojumu:</p>
+          <p class="mb-2">Izvēlies noskaņojumu:</p>
           <div id="controls" class="container flex-md-row align-items-center justify-content-center gap-3">
             <select id="mood-select" class="form-select w-auto">
               <option value="happy">Jautrs</option>
@@ -64,7 +64,7 @@
           id="global-player"
           class="custom-player justify-content-center mx-auto"
         >
-          <div class="now-playing mt-3 fw-bold"></div>
+          <div class="now-playing mt-2 fw-bold"></div>
           <div class="player-controls mb-2">
             <button class="prev">⏮️</button>
             <button class="play">▶️</button>
@@ -91,14 +91,14 @@
           <!-- Ikonas uz mājaslapām / Иконки на сайты -->
           <div class="text-center icon-links">
             <a
-              class="btn btn-link btn-floating btn-lg m-1"
+              class="btn btn-link btn-floating btn-lg"
               href="https://rtk2023.github.io/riki/"
               role="button"
             >
               <i class="fas fa-home"></i>
             </a>
             <a
-              class="btn btn-link btn-floating btn-lg m-1"
+              class="btn btn-link btn-floating btn-lg"
               href="https://github.com/D4rkN00dl3s/riki/tree/main/riki/mūzikas_ieteikums"
               role="button"
             >
