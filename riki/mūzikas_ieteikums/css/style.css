@@ -186,7 +186,7 @@ button:hover, select:hover {
   align-items: center;
   width: 100%;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
-  padding: 1rem 0;
+  padding: 0.5rem 0 0 0;
 }
 
 .custom-player button {
