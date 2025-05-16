@@ -27,10 +27,31 @@
         <div class="container">
           <!-- Tēmas un režīma pārslēgšana / Переключение темы и режима -->
           <div
-            class="container d-flex flex-wrap justify-content-end gap-2 mt-2"
+            class="container d-flex justify-content-start mt-2 position-relative"
           >
-            <button id="theme-toggle" class="btn btn-outline-secondary btn-sm">🌙 Tēma</button>
-            <button id="peep-toggle" class="btn btn-outline-secondary btn-sm">Peep Mode</button>
+            <div class="btn-group dropdown-menu-right">
+              <button
+                class="btn btn-outline-secondary btn-sm dropdown-toggle"
+                type="button"
+                id="settingsDropdown"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i class="fas fa-cog"></i>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="settingsDropdown">
+                <li>
+                  <button class="dropdown-item mt-0" id="theme-toggle">
+                    🌙 Tēma
+                  </button>
+                </li>
+                <li>
+                  <button class="dropdown-item" id="peep-toggle">
+                    Peep Mode
+                  </button>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
@@ -43,14 +64,19 @@
         <!-- Vadības bloks (paliek augšā) / Блок управления (прикреплён сверху) -->
         <div id="controls-container">
           <p class="mb-2">Izvēlies noskaņojumu:</p>
-          <div id="controls" class="container flex-md-row align-items-center justify-content-center gap-3">
+          <div
+            id="controls"
+            class="container flex-md-row align-items-center justify-content-center gap-3"
+          >
             <select id="mood-select" class="form-select w-auto">
               <option value="happy">Jautrs</option>
               <option value="sad">Skumjš</option>
               <option value="chill">Mierīgs</option>
               <option value="energetic">Enerģisks</option>
             </select>
-            <button id="find-button" class="btn btn-primary">Atrast mūziku</button>
+            <button id="find-button" class="btn btn-primary">
+              Atrast mūziku
+            </button>
           </div>
         </div>
 
@@ -115,6 +141,8 @@
 
     <!-- jQuery bibliotēka / jQuery библиотека -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Galvenais JS skripts / Основной JS скрипт -->
     <script src="js/script.js"></script>
